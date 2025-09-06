@@ -1,0 +1,9 @@
+﻿<Application x:Class="Contract_Monthly_Claims_System__CMCS_.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Contract_Monthly_Claims_System__CMCS_"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+         
+    </Application.Resources>
+</Application>
