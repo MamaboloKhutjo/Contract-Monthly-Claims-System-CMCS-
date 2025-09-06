@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Contract_Monthly_Claims_System__CMCS_"
         mc:Ignorable="d"
-        Title="MainWindow" Height="550" Width="750"
+        Title="CMCS - Log in" Height="750" Width="900"
         WindowStartupLocation="CenterScreen">
-   
+
 
     <Window.Resources>
         <Style  TargetType="Button">
@@ -69,7 +69,7 @@
         </Style>
     </Window.Resources>
 
-    <Grid>
+    <Grid Background="#F5F7F9">
         <Grid.RowDefinitions>
             <RowDefinition Height="100"/>
             <RowDefinition Height="*"/>
@@ -77,38 +77,83 @@
 
         <Grid Grid.Row="0" Background="Black">
             <Label Content="Contract Monthly Claims System (CMCS)" 
-              FontFamily="Arial" 
-              FontSize="30" 
-              FontWeight="Bold" 
-              Foreground="White"
-              HorizontalAlignment="Center" 
-              VerticalAlignment="Center" />
+                   FontFamily="Arial" 
+                   FontSize="30" 
+                   FontWeight="Bold" 
+                   Foreground="White"
+                   HorizontalAlignment="Center" 
+                   VerticalAlignment="Center" />
         </Grid>
 
         <Grid Grid.Row="1">
-            <Border CornerRadius="15" BorderBrush="LightGray" BorderThickness="1" Width="400" Height="300" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="20" >
+            <Border CornerRadius="15" 
+                    BorderBrush="LightGray" 
+                    BorderThickness="1" 
+                    Background="White"
+                    Width="450" 
+                    Height="400" 
+                    HorizontalAlignment="Center" 
+                    VerticalAlignment="Center" 
+                    Padding="30" >
 
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" >
-                    <TextBlock Text="Username"  Foreground="#737373" FontFamily="Arial" FontSize="23" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,195,6"/>
-                    <TextBox  Text=" " Width="300" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" BorderBrush="LightGray" BorderThickness="1"  Margin="0,0,0,12"/>
+                    <TextBlock Text="Login" 
+                               Foreground="#001a4d" 
+                               FontFamily="Arial" 
+                               FontSize="35"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center" 
+                               Margin="0,0,0,20"/>
 
-                    <TextBlock Text="Password" Foreground="#737373"  FontSize="23" FontFamily="Arial" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,195,6"/>
-                    <TextBox  Text=" " Width="300" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" BorderBrush="LightGray" BorderThickness="1" Margin="0,0,0,-50"/>
+                    <TextBlock Text="Name &amp; Surname"  
+                               Foreground="#737373" 
+                               FontFamily="Arial" 
+                               FontSize="16"
+                               Margin="20,0,0,5"/>
 
-                    <Button  Content="Login" FontFamily="Arial" FontWeight="Bold" Background="#001a4d"  Foreground="White" Width="300" Height="45" FontSize="16"  Margin="0,60,0,0" Click="Button_Click" />
+                    <TextBox Width="350" 
+                             FontSize="16" 
+                             HorizontalAlignment="Left" 
+                             BorderBrush="LightGray" 
+                             Margin="20,0,0,25"/>
+
+                    <TextBlock Text="Password" 
+                               Foreground="#737373"  
+                               FontSize="16" 
+                               FontFamily="Arial" 
+                               Margin="20,0,0,5"/>
+
+                    <PasswordBox Width="350" 
+                                 FontSize="16" 
+                                 HorizontalAlignment="Left" 
+                                 BorderBrush="LightGray" 
+                                 Margin="20,0,0,25"/>
+
+                    <Button  Content="Login" 
+                             FontFamily="Arial" 
+                             FontWeight="Bold" 
+                             Background="#001a4d"  
+                             Foreground="White" 
+                             Width="300" 
+                             Height="45" 
+                             FontSize="16"  
+                             Margin="0,5,0,0" 
+                             Click="Button_Click" />
+                    
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <TextBlock Text="Don't have an account? " 
-                         Foreground="#737373" 
-                         FontSize="14"/>
+                                   Foreground="#737373" 
+                                   FontSize="14"/>
 
                         <Button Content="Sign Up" 
-                         Background="Transparent" 
-                         Foreground="#0066CC" 
-                         BorderThickness="0" 
-                         FontSize="14"
-                         Cursor="Hand"
-                         Click="Button_Click_1"/>
+                                Background="Transparent" 
+                                Foreground="#0066CC" 
+                                BorderThickness="0" 
+                                FontSize="14"
+                                Cursor="Hand"
+                                Click="Button_Click_1"/>
                     </StackPanel>
+                    
                 </StackPanel>
 
             </Border>
