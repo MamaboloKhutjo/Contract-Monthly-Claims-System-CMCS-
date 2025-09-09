@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Contract_Monthly_Claims_System__CMCS_"
         mc:Ignorable="d"
-        Title="CMCS - Sign Up" Height="900" Width="900"
+        Title="CMCS - Sign Up" Height="850" Width="900"
         WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
@@ -66,6 +66,8 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        
+      
     </Window.Resources>
 
     <Grid Background="#F5F7F9">
@@ -159,11 +161,18 @@
                                FontFamily="Arial" 
                                Margin="20,0,0,5"/>
 
-                    <TextBox Width="350" 
-                                 FontSize="16" 
-                                 HorizontalAlignment="Left" 
-                                 BorderBrush="LightGray" 
-                                 Margin="20,0,0,25"/>
+                    <ComboBox x:Name="RoleComboBox"
+                              Width="350" 
+                              FontSize="16" 
+                              Background="White"
+                              HorizontalAlignment="Left" 
+                              BorderBrush="LightGray" 
+                              Margin="20,0,0,25">
+                        <ComboBoxItem Content="Lecturer" IsSelected="True"/>
+                        <ComboBoxItem Content="Program Coordinator"/>
+                        <ComboBoxItem Content="Manager"/>
+                    </ComboBox>
+
 
                     <Button  Content="Login" 
                              FontFamily="Arial" 

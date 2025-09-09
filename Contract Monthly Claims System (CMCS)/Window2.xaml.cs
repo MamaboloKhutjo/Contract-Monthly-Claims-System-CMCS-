@@ -26,9 +26,28 @@ namespace Contract_Monthly_Claims_System__CMCS_
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Window1 window1 = new Window1();    
-            window1.Show();
-            this.Close();
+
+            // Get the ComboBox from XAML by its Name
+            if (this.FindName("RoleComboBox") is ComboBox comboBox && comboBox.SelectedItem is ComboBoxItem selectedItem)
+            {
+                string selectedRole = selectedItem.Content.ToString();
+
+                if (selectedRole == "Lecturer")
+                {
+                    // Open Window3 for Lecturer
+                    Window3 window3 = new Window3();
+                    window3.Show();
+                }
+                else if (selectedRole == "Manager" || selectedRole == "Program Coordinator")
+                {
+                    // Open Window1 for Manager/Program Coordinator
+                    Window1 window1 = new Window1();
+                    window1.Show();
+                }
+
+                // Close login window
+                this.Close();
+            }
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
