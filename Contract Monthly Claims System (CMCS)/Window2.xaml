@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Contract_Monthly_Claims_System__CMCS_"
         mc:Ignorable="d"
-        Title="CMCS - Sign Up" Height="750" Width="900"
+        Title="CMCS - Sign Up" Height="900" Width="900"
         WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
@@ -91,7 +91,7 @@
                     BorderThickness="1" 
                     Background="White"
                     Width="450" 
-                    Height="550" 
+                    Height="700" 
                     HorizontalAlignment="Center" 
                     VerticalAlignment="Center" 
                     Padding="30">
@@ -153,16 +153,28 @@
                                  BorderBrush="LightGray" 
                                  Margin="20,0,0,25"/>
 
-                    <Button Content="Sign Up" 
-                            FontFamily="Arial" 
-                            FontWeight="Bold" 
-                            Background="#001a4d"  
-                            Foreground="White" 
-                            Width="350" 
-                            Height="40" 
-                            FontSize="16" 
-                            Margin="0,0,0,15"
-                            Click="Button_Click"/>
+                    <TextBlock Text="Role" 
+                               Foreground="#737373"  
+                               FontSize="16" 
+                               FontFamily="Arial" 
+                               Margin="20,0,0,5"/>
+
+                    <TextBox Width="350" 
+                                 FontSize="16" 
+                                 HorizontalAlignment="Left" 
+                                 BorderBrush="LightGray" 
+                                 Margin="20,0,0,25"/>
+
+                    <Button  Content="Login" 
+                             FontFamily="Arial" 
+                             FontWeight="Bold" 
+                             Background="#001a4d"  
+                             Foreground="White" 
+                             Width="300" 
+                             Height="45" 
+                             FontSize="16"  
+                             Margin="0,5,0,0" 
+                             Click="Button_Click" />
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <TextBlock Text="Already have an account? " 

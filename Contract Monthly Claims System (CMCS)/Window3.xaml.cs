@@ -15,30 +15,13 @@ using System.Windows.Shapes;
 namespace Contract_Monthly_Claims_System__CMCS_
 {
     /// <summary>
-    /// Interaction logic for Window1.xaml
+    /// Interaction logic for Window3.xaml
     /// </summary>
-    public partial class Window1 : Window
+    public partial class Window3 : Window
     {
-        public Window1()
+        public Window3()
         {
             InitializeComponent();
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            MainWindow mainWindow = new MainWindow();   
-            mainWindow.Show();
-            this.Close();   
-        }
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Button_Click_2(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }
