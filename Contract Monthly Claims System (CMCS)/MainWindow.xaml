@@ -111,7 +111,8 @@
                                FontSize="16"
                                Margin="20,0,0,5"/>
 
-                    <TextBox Width="350" 
+                    <TextBox x:Name="LoginNameTextBox"
+                             Width="350" 
                              FontSize="16" 
                              HorizontalAlignment="Left" 
                              BorderBrush="LightGray" 
@@ -123,7 +124,8 @@
                                FontFamily="Arial" 
                                Margin="20,0,0,5"/>
 
-                    <PasswordBox Width="350" 
+                    <PasswordBox x:Name="LoginPasswordBox"
+                                 Width="350" 
                                  FontSize="16" 
                                  HorizontalAlignment="Left" 
                                  BorderBrush="LightGray" 

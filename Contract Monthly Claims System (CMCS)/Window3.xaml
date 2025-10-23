@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="CMCS - Lecturer Dashboard" Height="700" Width="1200"
+        Title="CMCS - Lecturer Dashboard" Height="774" Width="1200"
         WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
@@ -104,7 +104,11 @@
                                Foreground="{StaticResource DarkGrayBrush}"/>
 
                     <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right" Margin="20,0">
-                        <TextBlock Text="Dr. John Smith" VerticalAlignment="Center" Margin="10,0,20,0" Foreground="{StaticResource DarkGrayBrush}"/>
+                        <TextBlock Text="{Binding CurrentUserName}" 
+                                   FontSize="20" 
+                                   VerticalAlignment="Center" 
+                                   Margin="10,0,20,0" 
+                                   Foreground="{StaticResource DarkGrayBrush}" />
                     </StackPanel>
                 </Grid>
             </Border>
@@ -119,7 +123,7 @@
 
                             <WrapPanel>
                                 <Button Content="Submit New Claim" Background="{StaticResource PrimaryBlueBrush}" Foreground="White" 
-                                        Width="180" Height="45" Margin="0,0,15,10" FontWeight="Bold" FontSize="14"/>
+                                        Width="180" Height="45" Margin="0,0,15,10" FontWeight="Bold" FontSize="14" Click="Button_Click"/>
                                 <Button Content="View My Claims" Background="{StaticResource WhiteBrush}" Foreground="{StaticResource PrimaryBlueBrush}" 
                                         Width="180" Height="45" Margin="0,0,15,10" BorderBrush="#cccccc" BorderThickness="1" FontSize="14"/>
                             </WrapPanel>
@@ -131,35 +135,35 @@
 
                     <WrapPanel>
                         <!-- Total Claims Card -->
-                        <Border Margin="0,0,15,15" Width="200" Height="100">
+                        <Border Margin="100,0,50,15" Width="200" Height="150">
                             <StackPanel Margin="15">
-                                <TextBlock Text="Total Claims" Foreground="{StaticResource MediumGrayBrush}" FontSize="14"/>
-                                <TextBlock Text="15" FontSize="28" FontWeight="Bold" Margin="0,5,0,0" Foreground="{StaticResource PrimaryBlueBrush}"/>
+                                <TextBlock Text="Total Claims" Foreground="{StaticResource MediumGrayBrush}" FontSize="14" FontWeight="Bold"/>
+                                <TextBlock Text="{Binding ClaimsSummary.TotalClaims}" FontSize="28" FontWeight="Bold" Margin="0,5,0,0" Foreground="{StaticResource PrimaryBlueBrush}"/>
                             </StackPanel>
                         </Border>
 
                         <!-- Pending Claims Card -->
-                        <Border Margin="0,0,15,15" Width="200" Height="100">
+                        <Border Margin="0,0,50,15" Width="200" Height="150">
                             <StackPanel Margin="15">
-                                <TextBlock Text="Pending" Foreground="{StaticResource MediumGrayBrush}" FontSize="14"/>
-                                <TextBlock Text="3" FontSize="28" FontWeight="Bold" Margin="0,5,0,0" Foreground="{StaticResource PrimaryBlueBrush}"/>
+                                <TextBlock Text="Pending" Foreground="{StaticResource MediumGrayBrush}" FontSize="14" FontWeight="Bold"/>
+                                <TextBlock Text="{Binding ClaimsSummary.PendingClaims}" FontSize="28" FontWeight="Bold" Margin="0,5,0,0" Foreground="{StaticResource PrimaryBlueBrush}"/>
                             </StackPanel>
                         </Border>
 
                         <!-- Approved Claims Card -->
-                        <Border Margin="0,0,15,15" Width="200" Height="100">
+                        <Border Margin="0,0,50,15" Width="200" Height="150">
                             <StackPanel Margin="15">
-                                <TextBlock Text="Approved" Foreground="{StaticResource MediumGrayBrush}" FontSize="14"/>
-                                <TextBlock Text="10" FontSize="28" FontWeight="Bold" Margin="0,5,0,0" Foreground="{StaticResource PrimaryBlueBrush}"/>
-                                <TextBlock Text="$2,450 total" Foreground="{StaticResource SuccessGreenBrush}" Margin="0,2,0,0" FontSize="12"/>
+                                <TextBlock Text="Approved" Foreground="{StaticResource MediumGrayBrush}" FontSize="14" FontWeight="Bold"/>
+                                <TextBlock Text="{Binding ClaimsSummary.ApprovedClaims}" FontSize="28" FontWeight="Bold" Margin="0,5,0,0" Foreground="{StaticResource PrimaryBlueBrush}"/>
+                                <TextBlock Text="{Binding ClaimsSummary.FormattedApprovedAmount, StringFormat='{}{0} total'}" Foreground="{StaticResource SuccessGreenBrush}" Margin="0,2,0,0" FontSize="12"/>
                             </StackPanel>
                         </Border>
 
                         <!-- Rejected Claims Card -->
-                        <Border Margin="0,0,15,15" Width="200" Height="100">
+                        <Border Margin="0,0,15,15" Width="200" Height="150">
                             <StackPanel Margin="15">
-                                <TextBlock Text="Rejected" Foreground="{StaticResource MediumGrayBrush}" FontSize="14"/>
-                                <TextBlock Text="2" FontSize="28" FontWeight="Bold" Margin="0,5,0,0" Foreground="{StaticResource PrimaryBlueBrush}"/>
+                                <TextBlock Text="Rejected" Foreground="{StaticResource MediumGrayBrush}" FontSize="14" FontWeight="Bold"/>
+                                <TextBlock Text="{Binding ClaimsSummary.RejectedClaims}" FontSize="28" FontWeight="Bold" Margin="0,5,0,0" Foreground="{StaticResource PrimaryBlueBrush}"/>
                             </StackPanel>
                         </Border>
                     </WrapPanel>
@@ -173,14 +177,19 @@
                                         HorizontalAlignment="Right" Margin="20,0,0,0" Padding="0"/>
                             </StackPanel>
 
-                            <DataGrid Height="250" AutoGenerateColumns="False" IsReadOnly="True" 
-                                      HeadersVisibility="Column" BorderThickness="0" SelectionMode="Single">
+                            <DataGrid Height="250" 
+                                      AutoGenerateColumns="False" 
+                                      IsReadOnly="True" 
+                                      HeadersVisibility="Column" 
+                                      BorderThickness="0" 
+                                      SelectionMode="Single"
+                                      ItemsSource="{Binding Claims}">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Claim ID" Width="100"/>
-                                    <DataGridTextColumn Header="Contract" Width="*"/>
-                                    <DataGridTextColumn Header="Submitted" Width="120"/>
-                                    <DataGridTextColumn Header="Amount" Width="120"/>
-                                    <DataGridTextColumn Header="Status" Width="120">
+                                    <DataGridTextColumn Header="Claim ID" Binding="{Binding ClaimId}" Width="100"/>
+                                    <DataGridTextColumn Header="Contract" Binding="{Binding ContractName}" Width="*"/>
+                                    <DataGridTextColumn Header="Submitted" Binding="{Binding FormattedDate}" Width="120"/>
+                                    <DataGridTextColumn Header="Amount" Binding="{Binding FormattedAmount}" Width="120"/>
+                                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="120">
                                         <DataGridTextColumn.ElementStyle>
                                             <Style TargetType="TextBlock" BasedOn="{StaticResource StatusStyle}"/>
                                         </DataGridTextColumn.ElementStyle>
@@ -192,7 +201,7 @@
                                                     <Button Content="View" Background="{StaticResource PrimaryBlueBrush}" Foreground="White" 
                                                             Padding="8,3" Margin="0,0,5,0" FontSize="12"/>
                                                     <Button Content="Retract" Background="{StaticResource ErrorRedBrush}" Foreground="White" 
-                                                            Padding="8,3" FontSize="12"/>
+                                                            Padding="8,3" FontSize="12" Click="RetractClaim_Click"/>
                                                 </StackPanel>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
@@ -205,8 +214,6 @@
                                         <Setter Property="BorderBrush" Value="{StaticResource BorderGrayBrush}"/>
                                     </Style>
                                 </DataGrid.RowStyle>
-
-                               
                             </DataGrid>
                         </StackPanel>
                     </Border>

@@ -112,8 +112,9 @@
                                FontFamily="Arial" 
                                FontSize="16"
                                Margin="20,0,0,5"/>
-                    
-                    <TextBox Width="350" 
+
+                    <TextBox x:Name="NameTextBox"
+                             Width="350" 
                              FontSize="16" 
                              HorizontalAlignment="Left" 
                              BorderBrush="LightGray" 
@@ -124,8 +125,9 @@
                                FontFamily="Arial" 
                                FontSize="16"
                                Margin="20,0,0,5"/>
-                    
-                    <TextBox Width="350" 
+
+                    <TextBox x:Name="SurnameTextBox"
+                             Width="350" 
                              FontSize="16" 
                              HorizontalAlignment="Left" 
                              BorderBrush="LightGray" 
@@ -136,8 +138,9 @@
                                FontSize="16" 
                                FontFamily="Arial" 
                                Margin="20,0,0,5"/>
-                    
-                    <PasswordBox Width="350" 
+
+                    <PasswordBox x:Name="PasswordBox"
+                                 Width="350" 
                                  FontSize="16" 
                                  HorizontalAlignment="Left" 
                                  BorderBrush="LightGray" 
@@ -148,8 +151,9 @@
                                FontSize="16" 
                                FontFamily="Arial" 
                                Margin="20,0,0,5"/>
-                    
-                    <PasswordBox Width="350" 
+
+                    <PasswordBox x:Name="ConfirmPasswordBox"
+                                 Width="350" 
                                  FontSize="16" 
                                  HorizontalAlignment="Left" 
                                  BorderBrush="LightGray" 
