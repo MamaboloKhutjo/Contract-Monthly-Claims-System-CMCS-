@@ -62,52 +62,33 @@ namespace Contract_Monthly_Claims_System__CMCS_
                 return;
             }
 
-            UserRepository.Users.Add(new UserRepository.User
+            // Check if user already exists
+            string fullUsername = $"{name} {surname}";
+            if (UserRepository.Users.Any(u => u.FullName == fullUsername))
+            {
+                MessageBox.Show("A user with this name already exists.", "Registration Error",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var newUser = new UserRepository.User
             {
                 Name = name,
                 Surname = surname,
                 Password = password,
                 Role = role
-            });
+            };
 
-            if (userCount < usersArray.GetLength(0))
-            {
-                usersArray[userCount, 0] = name;
-                usersArray[userCount, 1] = surname;
-                usersArray[userCount, 2] = password;
-                usersArray[userCount, 3] = role;
-                userCount++;
+            UserRepository.Users.Add(newUser);
+            UserRepository.SaveUsers(); // Save to file
 
-                // Also add to the list for easier access
-                UsersList.Add(new User
-                {
-                    Name = name,
-                    Surname = surname,
-                    Password = password,
-                    Role = role
-                });
+            MessageBox.Show("Registration successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                MessageBox.Show("Registration successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                // Navigate based on role
-                if (role == "Lecturer")
-                {
-                    MainWindow login = new MainWindow();
-                    login.Show();
-                }
-                else if (role == "Manager" || role == "Program Coordinator")
-                {
-                    MainWindow loggin = new MainWindow();
-                    loggin.Show();
-                }
-
-                this.Close();
-            }
-            else
-            {
-                MessageBox.Show("User limit reached. Cannot register more users.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            }
+            // Navigate to login
+            MainWindow login = new MainWindow();
+            login.Show();
+            this.Close();
+        }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {

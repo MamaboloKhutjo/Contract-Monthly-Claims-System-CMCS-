@@ -77,7 +77,7 @@
         </Grid.RowDefinitions>
 
 
-        <Grid Grid.Row="0" Background="Black">
+        <Grid Grid.Row="0" Background="#001a4d">
             <Label Content="Contract Monthly Claims System (CMCS)" 
                    FontFamily="Arial" 
                    FontSize="30" 

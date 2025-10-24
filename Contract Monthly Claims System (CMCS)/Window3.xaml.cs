@@ -293,6 +293,7 @@ namespace Contract_Monthly_Claims_System__CMCS_
                     };
 
                     ClaimRepository.Claims.Add(newClaim);
+                    // No need to call SaveClaims() manually - it's handled by CollectionChanged event
                     submitClaimWindow.Close();
 
                     MessageBox.Show("Claim submitted successfully!\n\nIt will now be reviewed by the program coordinator.",
@@ -371,6 +372,23 @@ namespace Contract_Monthly_Claims_System__CMCS_
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void ViewMyClaims_Click(object sender, RoutedEventArgs e)
+        {
+            ViewMyClaims();
+        }
+
+        private void ViewMyClaims()
+        {
+            var viewClaimsWindow = new Window4(UserRepository.CurrentUser?.FullName ?? "Unknown");
+            viewClaimsWindow.Owner = this;
+            viewClaimsWindow.ShowDialog();
+        }
+
+        private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }
