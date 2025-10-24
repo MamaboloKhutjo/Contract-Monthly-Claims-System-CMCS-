@@ -21,13 +21,11 @@ namespace Contract_Monthly_Claims_System__CMCS_
 
         public static User CurrentUser { get; set; }
 
-        // Initialize users from file
         public static void InitializeUsers()
         {
             Users = ClaimsDataService.LoadUsers();
         }
 
-        // Save users to file
         public static void SaveUsers()
         {
             ClaimsDataService.SaveUsers(Users);
@@ -63,10 +61,6 @@ namespace Contract_Monthly_Claims_System__CMCS_
             InitializeClaims();
         }
 
-      
-        
-
-        // Initialize claims from file
         public static void InitializeClaims()
         {
             var loadedClaims = ClaimsDataService.LoadClaims();
@@ -77,13 +71,11 @@ namespace Contract_Monthly_Claims_System__CMCS_
             }
         }
 
-        // Save claims to file
         public static void SaveClaims()
         {
             ClaimsDataService.SaveClaims(Claims);
         }
 
-        // Update a claim (for status changes)
         public static void UpdateClaim(Claim updatedClaim)
         {
             var existingClaim = Claims.FirstOrDefault(c => c.ClaimId == updatedClaim.ClaimId);
@@ -95,7 +87,7 @@ namespace Contract_Monthly_Claims_System__CMCS_
         }
     }
 
-    public class Claim : INotifyPropertyChanged
+    public class Claim 
     {
         private string _status;
 
@@ -105,6 +97,8 @@ namespace Contract_Monthly_Claims_System__CMCS_
         public decimal Amount { get; set; }
         public string LecturerName { get; set; }
         public string Description { get; set; }
+
+        public List<ClaimAttachment> Attachments { get; set; } = new List<ClaimAttachment>();
 
         public string Status
         {
@@ -116,12 +110,17 @@ namespace Contract_Monthly_Claims_System__CMCS_
             }
         }
 
-        // For JSON serialization - computed properties need to be ignored
         [JsonIgnore]
         public string FormattedAmount => $"R {Amount:N2}";
 
         [JsonIgnore]
         public string FormattedDate => SubmittedDate.ToString("dd/MM/yyyy");
+
+        [JsonIgnore]
+        public bool HasAttachments => Attachments?.Any() == true;
+
+        [JsonIgnore]
+        public string AttachmentSummary => HasAttachments ? $"{Attachments.Count} file(s) attached" : "No files attached";
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -131,7 +130,48 @@ namespace Contract_Monthly_Claims_System__CMCS_
         }
     }
 
-    public class ClaimsSummary : INotifyPropertyChanged
+
+    public class ClaimAttachment
+    {
+        public string FileName { get; set; }
+        public byte[] FileData { get; set; }
+        public string FileType { get; set; }
+        public long FileSize { get; set; }
+        public DateTime UploadDate { get; set; }
+
+        [JsonIgnore]
+        public string FormattedFileSize => FormatFileSize(FileSize);
+
+        [JsonIgnore]
+        public string FileIcon => GetFileIcon(FileType);
+
+        private string FormatFileSize(long bytes)
+        {
+            string[] sizes = { "B", "KB", "MB", "GB" };
+            int order = 0;
+            double len = bytes;
+            while (len >= 1024 && order < sizes.Length - 1)
+            {
+                order++;
+                len = len / 1024;
+            }
+            return $"{len:0.##} {sizes[order]}";
+        }
+
+        private string GetFileIcon(string fileType)
+        {
+            return fileType?.ToLower() switch
+            {
+                string type when type.Contains("image") => "🖼️",
+                string type when type.Contains("pdf") => "📄",
+                string type when type.Contains("word") => "📝",
+                string type when type.Contains("excel") => "📊",
+                _ => "📎"
+            };
+        }
+    }
+
+    public class ClaimsSummary
     {
         private int _totalClaims;
         private int _pendingClaims;

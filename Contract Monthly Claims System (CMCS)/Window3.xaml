@@ -105,10 +105,22 @@
 
                     <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right" Margin="20,0">
                         <TextBlock Text="{Binding CurrentUserName}" 
-                                   FontSize="20" 
-                                   VerticalAlignment="Center" 
-                                   Margin="10,0,20,0" 
-                                   Foreground="White" />
+               FontSize="20" 
+               VerticalAlignment="Center" 
+               Margin="10,0,20,0" 
+               Foreground="White" />
+
+                        <!-- Add Logout Button -->
+                        <Button Content="Logout" 
+            Background="Transparent" 
+            Foreground="White" 
+            BorderBrush="White" 
+            BorderThickness="1"
+            Padding="10,5"
+            FontSize="12"
+            FontWeight="SemiBold"
+            Cursor="Hand"
+            Click="LogoutButton_Click"/>
                     </StackPanel>
                 </Grid>
             </Border>
@@ -177,13 +189,15 @@
                             </StackPanel>
 
                             <DataGrid Height="250" 
-                                      AutoGenerateColumns="False" 
-                                      IsReadOnly="True" 
-                                      HeadersVisibility="Column" 
-                                      BorderThickness="0" 
-                                      SelectionMode="Single"
-                                      ItemsSource="{Binding Claims}" SelectionChanged="DataGrid_SelectionChanged">
+          AutoGenerateColumns="False" 
+          IsReadOnly="True" 
+          HeadersVisibility="Column" 
+          BorderThickness="0" 
+          SelectionMode="Single"
+          ItemsSource="{Binding UserClaims}" 
+          SelectionChanged="DataGrid_SelectionChanged">
                                 <DataGrid.Columns>
+                                    
                                     <DataGridTextColumn Header="Claim ID" Binding="{Binding ClaimId}" Width="100"/>
                                     <DataGridTextColumn Header="Contract" Binding="{Binding ContractName}" Width="*"/>
                                     <DataGridTextColumn Header="Submitted" Binding="{Binding FormattedDate}" Width="120"/>

@@ -62,7 +62,6 @@ namespace Contract_Monthly_Claims_System__CMCS_
                 return;
             }
 
-            // Check if user already exists
             string fullUsername = $"{name} {surname}";
             if (UserRepository.Users.Any(u => u.FullName == fullUsername))
             {
@@ -80,11 +79,10 @@ namespace Contract_Monthly_Claims_System__CMCS_
             };
 
             UserRepository.Users.Add(newUser);
-            UserRepository.SaveUsers(); // Save to file
+            UserRepository.SaveUsers();
 
             MessageBox.Show("Registration successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
 
-            // Navigate to login
             MainWindow login = new MainWindow();
             login.Show();
             this.Close();

@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="CMCS - Management Dashboard" Height="947" Width="1200"
+        Title="CMCS - Management Dashboard" Height="655" Width="1200"
         WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
@@ -99,11 +99,23 @@
                     <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right" Margin="20,0">
                         <!-- Changed from "Program Coordinator" to display current user's name -->
                         <TextBlock Text="{Binding CurrentUserName}" 
-                                   VerticalAlignment="Center" 
-                                   Margin="10,0,20,0" 
-                                   Foreground="White"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"/>
+               VerticalAlignment="Center" 
+               Margin="10,0,20,0" 
+               Foreground="White"
+               FontSize="14"
+               FontWeight="SemiBold"/>
+
+                        <!-- Add Logout Button -->
+                        <Button Content="Logout" 
+            Background="Transparent" 
+            Foreground="White" 
+            BorderBrush="White" 
+            BorderThickness="1"
+            Padding="10,5"
+            FontSize="12"
+            FontWeight="SemiBold"
+            Cursor="Hand"
+            Click="LogoutButton_Click"/>
                     </StackPanel>
                 </Grid>
             </Border>
@@ -153,6 +165,7 @@
                                 <Button Content="View All" Foreground="{StaticResource PrimaryBlueBrush}" BorderThickness="0" 
                                         HorizontalAlignment="Right" Margin="20,0,0,0" Padding="0"
                                         Click="ViewAllPendingClaims_Click"/>
+                                
                             </StackPanel>
 
                             <DataGrid Height="250" AutoGenerateColumns="False" IsReadOnly="True" 
@@ -165,6 +178,7 @@
                                     <DataGridTextColumn Header="Submitted" Binding="{Binding FormattedDate}" Width="120"/>
                                     <DataGridTextColumn Header="Amount" Binding="{Binding FormattedAmount}" Width="120"/>
                                     <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="120">
+                                        
                                         <DataGridTextColumn.ElementStyle>
                                             <Style TargetType="TextBlock" BasedOn="{StaticResource StatusStyle}"/>
                                         </DataGridTextColumn.ElementStyle>
@@ -198,20 +212,7 @@
                         </StackPanel>
                     </Border>
 
-                    <Border Margin="0,20,0,20">
-                        <StackPanel Margin="15">
-                            <TextBlock Text="Reports" FontSize="18" FontWeight="Bold" Margin="0,0,0,15" Foreground="{StaticResource DarkGrayBrush}"/>
-
-                            <WrapPanel>
-                                <Button Content="Monthly Claims Report" Background="{StaticResource PrimaryBlueBrush}" Foreground="White" 
-                                        Width="200" Height="40" Margin="0,0,15,15" FontWeight="Bold"/>
-                                <Button Content="Approval Summary" Background="{StaticResource WhiteBrush}" Foreground="{StaticResource PrimaryBlueBrush}" 
-                                        Width="200" Height="40" Margin="0,0,15,15" BorderBrush="#cccccc" BorderThickness="1"/>
-                                <Button Content="Export to Excel" Background="{StaticResource WhiteBrush}" Foreground="{StaticResource PrimaryBlueBrush}" 
-                                        Width="200" Height="40" Margin="0,0,15,15" BorderBrush="#cccccc" BorderThickness="1"/>
-                            </WrapPanel>
-                        </StackPanel>
-                    </Border>
+                    
                 </StackPanel>
             </ScrollViewer>
         </Grid>

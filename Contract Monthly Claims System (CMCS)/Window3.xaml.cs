@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,8 +14,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 
 
 namespace Contract_Monthly_Claims_System__CMCS_
@@ -24,6 +25,7 @@ namespace Contract_Monthly_Claims_System__CMCS_
     {
         private ClaimsSummary _claimsSummary;
         private string _currentUserName;
+        private ObservableCollection<Claim> _userClaims;
 
         public string CurrentUserName
         {
@@ -44,9 +46,16 @@ namespace Contract_Monthly_Claims_System__CMCS_
                 OnPropertyChanged(nameof(ClaimsSummary));
             }
         }
-        public ObservableCollection<Claim> Claims => ClaimRepository.Claims;
 
-
+        public ObservableCollection<Claim> UserClaims
+        {
+            get => _userClaims;
+            set
+            {
+                _userClaims = value;
+                OnPropertyChanged(nameof(UserClaims));
+            }
+        }
 
         public Window3()
         {
@@ -62,21 +71,38 @@ namespace Contract_Monthly_Claims_System__CMCS_
                 CurrentUserName = "Guest User";
             }
 
-            // Initialize claims summary
+            UserClaims = new ObservableCollection<Claim>();
+
             ClaimsSummary = new ClaimsSummary();
             UpdateClaimsSummary();
+            UpdateUserClaims();
 
-            // Subscribe to claims collection changes
-            ClaimRepository.Claims.CollectionChanged += (s, e) => UpdateClaimsSummary();
+            ClaimRepository.Claims.CollectionChanged += (s, e) =>
+            {
+                UpdateClaimsSummary();
+                UpdateUserClaims();
+            };
 
-            // Set the data context for binding
-            this.DataContext = this; ;
-
+            this.DataContext = this;
         }
 
         private void UpdateClaimsSummary()
         {
             ClaimsSummary.UpdateSummary(ClaimRepository.Claims, UserRepository.CurrentUser?.FullName);
+        }
+
+        private void UpdateUserClaims()
+        {
+            var userClaims = ClaimRepository.Claims
+                .Where(c => c.LecturerName == UserRepository.CurrentUser?.FullName)
+                .OrderByDescending(c => c.SubmittedDate)
+                .ToList();
+
+            UserClaims.Clear();
+            foreach (var claim in userClaims)
+            {
+                UserClaims.Add(claim);
+            }
         }
 
 
@@ -90,12 +116,12 @@ namespace Contract_Monthly_Claims_System__CMCS_
             var submitClaimWindow = new Window()
             {
                 Title = "Submit New Claim - CMCS",
-                Width = 450,
-                Height = 550,
+                Width = 500,
+                Height = 650, 
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 ResizeMode = ResizeMode.NoResize,
                 Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F5F7F9")),
-                Icon = this.Icon // Use same icon as main window
+                Icon = this.Icon
             };
 
             var mainGrid = new Grid { Margin = new Thickness(0) };
@@ -160,11 +186,6 @@ namespace Contract_Monthly_Claims_System__CMCS_
             contractComboBox.Items.Add("Data Structures 205");
             contractComboBox.Items.Add("Algorithms 310");
             contractComboBox.SelectedIndex = 0;
-
-            contractComboBox.ItemContainerStyle = new Style(typeof(ComboBoxItem));
-            contractComboBox.ItemContainerStyle.Setters.Add(new Setter(Control.PaddingProperty, new Thickness(10)));
-            contractComboBox.ItemContainerStyle.Setters.Add(new Setter(Control.FontSizeProperty, 14.0));
-
             contractSection.Children.Add(contractComboBox);
             contentStackPanel.Children.Add(contractSection);
 
@@ -207,7 +228,7 @@ namespace Contract_Monthly_Claims_System__CMCS_
             var descriptionSection = CreateFormSection("Description");
             var descriptionTextBox = new TextBox
             {
-                Height = 100,
+                Height = 80,
                 FontSize = 14,
                 Background = Brushes.White,
                 BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#dee2e6")),
@@ -237,6 +258,117 @@ namespace Contract_Monthly_Claims_System__CMCS_
             descGrid.Children.Add(descWatermark);
             descriptionSection.Children.Add(descGrid);
             contentStackPanel.Children.Add(descriptionSection);
+
+            var attachmentsSection = CreateFormSection("Attachments");
+
+            var attachmentsStackPanel = new StackPanel();
+
+            var selectedFilesListBox = new ListBox
+            {
+                Height = 100,
+                Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#f8f9fa")),
+                BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#dee2e6")),
+                BorderThickness = new Thickness(1),
+                Margin = new Thickness(0, 5, 0, 10)
+            };
+
+            var fileButtonStack = new StackPanel { Orientation = Orientation.Horizontal };
+
+            var addFileButton = new Button
+            {
+                Content = "📎 Add Files",
+                Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#6c757d")),
+                Foreground = Brushes.White,
+                Height = 35,
+                FontSize = 12,
+                FontWeight = FontWeights.Medium,
+                Cursor = Cursors.Hand
+            };
+
+            var removeFileButton = new Button
+            {
+                Content = "🗑️ Remove Selected",
+                Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#dc3545")),
+                Foreground = Brushes.White,
+                Height = 35,
+                FontSize = 12,
+                FontWeight = FontWeights.Medium,
+                Cursor = Cursors.Hand,
+                Margin = new Thickness(10, 0, 0, 0)
+            };
+
+            fileButtonStack.Children.Add(addFileButton);
+            fileButtonStack.Children.Add(removeFileButton);
+
+            attachmentsStackPanel.Children.Add(new TextBlock
+            {
+                Text = "Supported files: Images, PDF, Word, Excel (Max 10MB total)",
+                FontSize = 11,
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#6c757d")),
+                Margin = new Thickness(0, 0, 0, 5)
+            });
+            attachmentsStackPanel.Children.Add(selectedFilesListBox);
+            attachmentsStackPanel.Children.Add(fileButtonStack);
+
+            attachmentsSection.Children.Add(attachmentsStackPanel);
+            contentStackPanel.Children.Add(attachmentsSection);
+
+            // Store selected files
+            List<ClaimAttachment> selectedFiles = new List<ClaimAttachment>();
+
+            // File selection handler
+            addFileButton.Click += (s, e) =>
+            {
+                var openFileDialog = new Microsoft.Win32.OpenFileDialog
+                {
+                    Multiselect = true,
+                    Filter = "All supported files|*.jpg;*.jpeg;*.png;*.gif;*.bmp;*.pdf;*.doc;*.docx;*.xls;*.xlsx|Images|*.jpg;*.jpeg;*.png;*.gif;*.bmp|PDF files|*.pdf|Word documents|*.doc;*.docx|Excel files|*.xls;*.xlsx",
+                    Title = "Select files to attach to claim"
+                };
+
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    foreach (string filename in openFileDialog.FileNames)
+                    {
+                        try
+                        {
+                            var fileInfo = new FileInfo(filename);
+                            if (fileInfo.Length > 10 * 1024 * 1024) // 10MB limit
+                            {
+                                MessageBox.Show($"File {fileInfo.Name} is too large. Maximum size is 10MB.", "File Too Large", MessageBoxButton.OK, MessageBoxImage.Warning);
+                                continue;
+                            }
+
+                            var attachment = new ClaimAttachment
+                            {
+                                FileName = fileInfo.Name,
+                                FileData = File.ReadAllBytes(filename),
+                                FileType = System.IO.Path.GetExtension(filename),
+                                FileSize = fileInfo.Length,
+                                UploadDate = DateTime.Now
+                            };
+
+                            selectedFiles.Add(attachment);
+                            selectedFilesListBox.Items.Add($"{attachment.FileIcon} {attachment.FileName} ({attachment.FormattedFileSize})");
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"Error reading file {filename}: {ex.Message}", "File Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                }
+            };
+
+            // File removal handler
+            removeFileButton.Click += (s, e) =>
+            {
+                if (selectedFilesListBox.SelectedIndex != -1)
+                {
+                    int selectedIndex = selectedFilesListBox.SelectedIndex;
+                    selectedFiles.RemoveAt(selectedIndex);
+                    selectedFilesListBox.Items.RemoveAt(selectedIndex);
+                }
+            };
 
             var buttonsStackPanel = new StackPanel
             {
@@ -289,14 +421,14 @@ namespace Contract_Monthly_Claims_System__CMCS_
                         Amount = amount,
                         Status = "Pending",
                         LecturerName = UserRepository.CurrentUser?.FullName ?? "Unknown",
-                        Description = descriptionTextBox.Text
+                        Description = descriptionTextBox.Text,
+                        Attachments = new List<ClaimAttachment>(selectedFiles)
                     };
 
                     ClaimRepository.Claims.Add(newClaim);
-                    // No need to call SaveClaims() manually - it's handled by CollectionChanged event
                     submitClaimWindow.Close();
 
-                    MessageBox.Show("Claim submitted successfully!\n\nIt will now be reviewed by the program coordinator.",
+                    MessageBox.Show($"Claim submitted successfully!\n\nAttached {selectedFiles.Count} file(s).\nIt will now be reviewed by the program coordinator.",
                         "Claim Submitted",
                         MessageBoxButton.OK,
                         MessageBoxImage.Information);
@@ -389,6 +521,20 @@ namespace Contract_Monthly_Claims_System__CMCS_
         private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
+        }
+
+        private void LogoutButton_Click(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show("Are you sure you want to logout?", "Confirm Logout",
+       MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                UserRepository.CurrentUser = null;
+                MainWindow loginWindow = new MainWindow();
+                loginWindow.Show();
+                this.Close();
+            }
         }
     }
 }

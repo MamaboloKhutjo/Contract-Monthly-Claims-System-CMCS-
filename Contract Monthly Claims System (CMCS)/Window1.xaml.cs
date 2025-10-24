@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
+using Microsoft.Win32;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -133,16 +135,13 @@ namespace Contract_Monthly_Claims_System__CMCS_
                 if (result == MessageBoxResult.Yes)
                 {
                     claim.Status = "Approved";
-                    // No need to call SaveClaims() manually - it's handled by PropertyChanged event
-                    LoadClaimsData(); // Refresh data
+                    LoadClaimsData(); 
 
                     MessageBox.Show($"Claim {claim.ClaimId} has been approved successfully.",
                         "Approval Successful", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
         }
-
-        // Reject claim
         private void RejectClaim_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button button && button.DataContext is Claim claim)
@@ -153,8 +152,7 @@ namespace Contract_Monthly_Claims_System__CMCS_
                 if (result == MessageBoxResult.Yes)
                 {
                     claim.Status = "Rejected";
-                    // No need to call SaveClaims() manually - it's handled by PropertyChanged event
-                    LoadClaimsData(); // Refresh data
+                    LoadClaimsData();
 
                     MessageBox.Show($"Claim {claim.ClaimId} has been rejected.",
                         "Rejection Completed", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -162,7 +160,6 @@ namespace Contract_Monthly_Claims_System__CMCS_
             }
         }
 
-        // View claim details
         private void ViewClaim_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button button && button.DataContext is Claim claim)
@@ -176,11 +173,11 @@ namespace Contract_Monthly_Claims_System__CMCS_
             var detailWindow = new Window()
             {
                 Title = $"Claim Details - {claim.ClaimId}",
-                Width = 500,
-                Height = 450,
+                Width = 600, // Increased width for attachments
+                Height = 600,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 Owner = this,
-                ResizeMode = ResizeMode.NoResize,
+                ResizeMode = ResizeMode.CanResize,
                 Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F5F7F9"))
             };
 
@@ -222,18 +219,19 @@ namespace Contract_Monthly_Claims_System__CMCS_
             // Claim details
             var details = new[]
             {
-                new { Label = "Claim ID:", Value = claim.ClaimId },
-                new { Label = "Lecturer:", Value = claim.LecturerName },
-                new { Label = "Contract:", Value = claim.ContractName },
-                new { Label = "Submitted:", Value = claim.SubmittedDate.ToString("dd/MM/yyyy HH:mm") },
-                new { Label = "Amount:", Value = claim.FormattedAmount },
-                new { Label = "Status:", Value = claim.Status }
-            };
+        new { Label = "Claim ID:", Value = claim.ClaimId },
+        new { Label = "Lecturer:", Value = claim.LecturerName },
+        new { Label = "Contract:", Value = claim.ContractName },
+        new { Label = "Submitted:", Value = claim.SubmittedDate.ToString("dd/MM/yyyy HH:mm") },
+        new { Label = "Amount:", Value = claim.FormattedAmount },
+        new { Label = "Status:", Value = claim.Status },
+        new { Label = "Attachments:", Value = claim.AttachmentSummary }
+    };
 
             foreach (var detail in details)
             {
                 var detailGrid = new Grid();
-                detailGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100) });
+                detailGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(120) });
                 detailGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
                 detailGrid.Margin = new Thickness(0, 0, 0, 10);
 
@@ -273,7 +271,8 @@ namespace Contract_Monthly_Claims_System__CMCS_
                 BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#DDDDDD")),
                 BorderThickness = new Thickness(1),
                 Padding = new Thickness(10),
-                CornerRadius = new CornerRadius(4)
+                CornerRadius = new CornerRadius(4),
+                Margin = new Thickness(0, 0, 0, 15)
             };
 
             var descText = new TextBlock
@@ -285,6 +284,84 @@ namespace Contract_Monthly_Claims_System__CMCS_
 
             descBox.Child = descText;
             contentStack.Children.Add(descBox);
+
+            // Attachments Section
+            if (claim.HasAttachments)
+            {
+                var attachmentsLabel = new TextBlock
+                {
+                    Text = "Attached Files:",
+                    FontWeight = FontWeights.SemiBold,
+                    Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#333333")),
+                    Margin = new Thickness(0, 10, 0, 10)
+                };
+                contentStack.Children.Add(attachmentsLabel);
+
+                foreach (var attachment in claim.Attachments)
+                {
+                    var attachmentBorder = new Border
+                    {
+                        Background = Brushes.White,
+                        BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#DDDDDD")),
+                        BorderThickness = new Thickness(1),
+                        Padding = new Thickness(10),
+                        CornerRadius = new CornerRadius(4),
+                        Margin = new Thickness(0, 0, 0, 5)
+                    };
+
+                    var attachmentGrid = new Grid();
+                    attachmentGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                    attachmentGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100) });
+
+                    var fileInfoText = new TextBlock
+                    {
+                        Text = $"{attachment.FileIcon} {attachment.FileName} ({attachment.FormattedFileSize})",
+                        Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#666666")),
+                        VerticalAlignment = VerticalAlignment.Center
+                    };
+                    Grid.SetColumn(fileInfoText, 0);
+
+                    var downloadButton = new Button
+                    {
+                        Content = "📥 Download",
+                        Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#001a4d")),
+                        Foreground = Brushes.White,
+ 
+                        FontSize = 11,
+                        FontWeight = FontWeights.Medium,
+                        Tag = attachment,
+                        Cursor = Cursors.Hand
+                    };
+                    downloadButton.Click += (s, e) =>
+                    {
+                        DownloadAttachment(attachment);
+                    };
+                    Grid.SetColumn(downloadButton, 1);
+
+                    attachmentGrid.Children.Add(fileInfoText);
+                    attachmentGrid.Children.Add(downloadButton);
+                    attachmentBorder.Child = attachmentGrid;
+                    contentStack.Children.Add(attachmentBorder);
+                }
+
+                // Add download all button
+                var downloadAllButton = new Button
+                {
+                    Content = "📦 Download All Files as ZIP",
+                    Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#00a86b")),
+                    Foreground = Brushes.White,
+                    FontSize = 12,
+                    FontWeight = FontWeights.Bold,
+                    Margin = new Thickness(0, 15, 0, 0),
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    Cursor = Cursors.Hand
+                };
+                downloadAllButton.Click += (s, e) =>
+                {
+                    DownloadAllAttachments(claim);
+                };
+                contentStack.Children.Add(downloadAllButton);
+            }
 
             scrollViewer.Content = contentStack;
 
@@ -320,7 +397,72 @@ namespace Contract_Monthly_Claims_System__CMCS_
             detailWindow.ShowDialog();
         }
 
-        // View All pending claims
+        // Add these new methods for file downloads
+        private void DownloadAttachment(ClaimAttachment attachment)
+        {
+            var saveFileDialog = new Microsoft.Win32.SaveFileDialog
+            {
+                FileName = attachment.FileName,
+                Filter = $"All files (*.*)|*.*"
+            };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    File.WriteAllBytes(saveFileDialog.FileName, attachment.FileData);
+                    MessageBox.Show($"File '{attachment.FileName}' downloaded successfully!", "Download Complete",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error downloading file: {ex.Message}", "Download Error",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+        private void DownloadAllAttachments(Claim claim)
+        {
+            var saveFileDialog = new Microsoft.Win32.SaveFileDialog
+            {
+                FileName = $"Claim_{claim.ClaimId}_Attachments.zip",
+                Filter = "ZIP files (*.zip)|*.zip"
+            };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    using (var memoryStream = new System.IO.MemoryStream())
+                    {
+                        using (var archive = new System.IO.Compression.ZipArchive(memoryStream, System.IO.Compression.ZipArchiveMode.Create, true))
+                        {
+                            foreach (var attachment in claim.Attachments)
+                            {
+                                var entry = archive.CreateEntry(attachment.FileName, System.IO.Compression.CompressionLevel.Optimal);
+                                using (var entryStream = entry.Open())
+                                {
+                                    entryStream.Write(attachment.FileData, 0, attachment.FileData.Length);
+                                }
+                            }
+                        }
+
+                        File.WriteAllBytes(saveFileDialog.FileName, memoryStream.ToArray());
+                    }
+
+                    MessageBox.Show($"All {claim.Attachments.Count} files downloaded successfully as ZIP!", "Download Complete",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error creating ZIP file: {ex.Message}", "Download Error",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+        
+        
+
         private void ViewAllPendingClaims_Click(object sender, RoutedEventArgs e)
         {
             var allPendingClaims = ClaimRepository.Claims
@@ -354,7 +496,6 @@ namespace Contract_Monthly_Claims_System__CMCS_
             grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
             grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
-            // Header
             var header = new TextBlock
             {
                 Text = $"All Pending Claims ({claims.Count})",
@@ -365,7 +506,6 @@ namespace Contract_Monthly_Claims_System__CMCS_
             };
             Grid.SetRow(header, 0);
 
-            // DataGrid
             var dataGrid = new DataGrid
             {
                 ItemsSource = claims,
@@ -381,7 +521,6 @@ namespace Contract_Monthly_Claims_System__CMCS_
             dataGrid.Columns.Add(new DataGridTextColumn { Header = "Submitted", Binding = new Binding("FormattedDate"), Width = 120 });
             dataGrid.Columns.Add(new DataGridTextColumn { Header = "Amount", Binding = new Binding("FormattedAmount"), Width = 120 });
 
-            // Close button
             var closeButton = new Button
             {
                 Content = "Close",
@@ -405,6 +544,20 @@ namespace Contract_Monthly_Claims_System__CMCS_
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void LogoutButton_Click(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show("Are you sure you want to logout?", "Confirm Logout",
+        MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                UserRepository.CurrentUser = null;
+                MainWindow loginWindow = new MainWindow();
+                loginWindow.Show();
+                this.Close();
+            }
         }
     }
 }

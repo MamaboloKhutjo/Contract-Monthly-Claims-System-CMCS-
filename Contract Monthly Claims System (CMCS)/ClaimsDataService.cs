@@ -39,7 +39,6 @@ namespace Contract_Monthly_Claims_System__CMCS_
             };
         }
 
-        // Save claims to file
         public static void SaveClaims(ObservableCollection<Claim> claims)
         {
             try
@@ -55,7 +54,6 @@ namespace Contract_Monthly_Claims_System__CMCS_
             }
         }
 
-        // Load claims from file
         public static List<Claim> LoadClaims()
         {
             try
@@ -75,7 +73,6 @@ namespace Contract_Monthly_Claims_System__CMCS_
             return new List<Claim>();
         }
 
-        // Save users to file
         public static void SaveUsers(List<UserRepository.User> users)
         {
             try
@@ -90,7 +87,6 @@ namespace Contract_Monthly_Claims_System__CMCS_
             }
         }
 
-        // Load users from file
         public static List<UserRepository.User> LoadUsers()
         {
             try

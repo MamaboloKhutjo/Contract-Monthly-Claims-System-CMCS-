@@ -29,7 +29,7 @@ namespace Contract_Monthly_Claims_System__CMCS_
 
         private void LoadClaims()
         {
-            // Filter claims for the current lecturer
+
             var userClaims = ClaimRepository.Claims
                 .Where(c => c.LecturerName == _currentUserName)
                 .OrderByDescending(c => c.SubmittedDate)

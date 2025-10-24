@@ -47,7 +47,6 @@ namespace Contract_Monthly_Claims_System__CMCS_
                 return;
             }
 
-            // Check if user exists in Window2 data
             bool loginSuccessful = CheckCredentials(username, password);
 
             if (loginSuccessful)
@@ -55,7 +54,6 @@ namespace Contract_Monthly_Claims_System__CMCS_
                 MessageBox.Show("Login successful!", "Success",
                     MessageBoxButton.OK, MessageBoxImage.Information);
 
-                // Navigate to appropriate window based on user role
                 NavigateToUserWindow(username);
             }
             else
